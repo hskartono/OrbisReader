@@ -1,0 +1,58 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="main-container">
+    <h2>Welcome!</h2>
+    <hr class="dark-seperator" />
+    <p>This is Playstation Network Media Lister developed by juraganbrewok. Simply login to your <a target="_blank" href="https://store.playstation.com">Playstation Network</a> account, 
+    and then visit <a target="_blank" href="https://store.sonyentertainmentnetwork.com/kamaji/api/chihiro/00_09_000/gateway/store/v1/users/me/internal_entitlements?start=0&size=800&fields=game_meta%2Cdrm_def">this link</a> to get the JSON content.
+    Last but not least, paste the content into text area below and press the process button.</p>
+    <form method="post">
+        <div class="form-group">
+            <input type="hidden" name="doprocess" value="1" />
+            <textarea class="form-control" rows="5" name="psnjson"></textarea><br />
+            <input type="submit" class="btn btn-primary" value="Process &raquo;" />
+        </div>
+    </form>
+    @if (ViewBag.posted == true)
+    {
+        <hr class="dark-seperator" />
+        if (!String.IsNullOrEmpty(ViewBag.error))
+        {
+            <div class="alert alert-danger" role="alert"><strong>Error</strong>: @ViewBag.error</div>
+        }
+        else
+        {
+            List<OrbisReader.Models.OrbisPSNMediaInfo> datas = ViewBag.datas;
+
+            <table class="table table-striped table-hover">
+                <tr>
+                    <th>Icon</th>
+                    <th>Game ID</th>
+                    <th>Title</th>
+                    <th>Size</th>
+                    <th>Platform</th>
+                    <th>Hyperlink</th>
+                </tr>
+                @foreach (OrbisReader.Models.OrbisPSNMediaInfo item in datas)
+                {
+                    <tr>
+                        <td><img height="124px" src="@(item.IconURL)" /></td>
+                        <td>@(item.ContentId)</td>
+                        <td>@(item.ContentTitle)@if (item.IsPSPlus) { <img src="~/Content/psplus.png" /> }</td>
+                        <td>@(item.ContentSize)</td>
+                        <td>@(item.Platform)</td>
+                        @if (!String.IsNullOrEmpty(item.ContentURL))
+                        {
+                            <td><a href="@(item.ContentURL)" class="ls-modal">Link</a></td>
+                        } else
+                        {
+                            <td></td>
+                        }
+                    </tr>
+                }
+            </table>
+        }
+    }
+</div>
